@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +8,7 @@
     <title>Study Manager - Home</title>
     <script src="script.js" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+ 
 </head>
 <body class="bg-pastel-purple min-h-screen flex items-center justify-center">
     <!-- Back Button -->
@@ -35,12 +38,13 @@
         <!-- Navigation Buttons -->
         <div class="grid grid-cols-2 gap-12 w-full max-w-md">
             <!-- Pomodoro Page Button -->
-            <a href="pomodoro.html" class="bg-purple-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-purple-500 transition duration-300 shadow-lg">
+            <a href="{% url 'pomodoro' %}" class="bg-purple-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-purple-500 transition duration-300 shadow-lg">
                 Pomodoro Timer
             </a>
+            
 
             <!-- To-Do List Page Button -->
-            <a href="todo.html" class="bg-green-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-green-500 transition duration-300 shadow-lg">
+            <a  href="{% url 'tasks' %}" class="bg-green-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-green-500 transition duration-300 shadow-lg">
                 Task Manager
             </a>
         </div>
@@ -51,5 +55,45 @@
             <p class="text-md text-gray-700 mt-2">Stay organized and productive with our Pomodoro Timer and To-Do List!</p>
         </div>
     </div>
+    <script>
+        // Display current date
+function updateDate() {
+    const currentDate = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateString = currentDate.toLocaleDateString(undefined, options);
+    document.getElementById('current-date').textContent = dateString;
+}
+
+// Display current time
+function updateTime() {
+    const currentTime = new Date();
+    const timeString = currentTime.toLocaleTimeString();
+    document.getElementById('current-time').textContent = timeString;
+}
+
+// Update both date and time every second
+setInterval(updateTime, 1000);
+updateDate();
+
+// Random Motivational Quotes
+const quotes = [
+    "Believe you can and you're halfway there.",
+    "Don't watch the clock; do what it does. Keep going.",
+    "The secret of getting ahead is getting started.",
+    "Success is the sum of small efforts repeated day in and day out.",
+    "Focus on being productive instead of busy.",
+    "Your limitation—it’s only your imagination."
+];
+
+// Display a random quote
+function displayRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    document.getElementById('quote').textContent = quotes[randomIndex];
+}
+
+// Change quote every time the page loads
+displayRandomQuote();
+
+    </script>
 </body>
 </html>
