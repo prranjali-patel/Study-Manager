@@ -5,24 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js" defer></script>
     <style>
         .progress-bar {
             background-color: #e2e8f0;
             height: 8px;
             border-radius: 9999px;
         }
-
         .progress-fill {
             background-color: #d946ef;
             height: 100%;
-            width: 70%;
+            width: 0%; /* Start at 0% */
             border-radius: 9999px;
         }
-
         .modal {
             transition: opacity 0.3s ease;
         }
-
         .modal-active {
             display: flex;
             opacity: 1;
@@ -123,6 +121,5 @@
             </form>
         </div>
     </div>
-            
 </body>
 </html>

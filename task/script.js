@@ -15,6 +15,20 @@ const weeklyProgressText = document.getElementById('weeklyProgressText');
 let tasks = [];
 let simulatedDay = getFormattedDate().day;
 
+// Load tasks from localStorage
+function loadTasks() {
+    const storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+        tasks = JSON.parse(storedTasks);
+        updateTasks();
+    }
+}
+
+// Save tasks to localStorage
+function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
 function getFormattedDate() {
     const now = new Date();
     const day = now.getDay();
@@ -74,6 +88,7 @@ function addTask(list, taskText, task) {
     li.innerHTML = `
         <input type="checkbox" class="mr-2" ${task.completed ? 'checked' : ''} onchange="toggleTaskCompletion(event, '${task.text}')"/> 
         ${taskText}
+        <button onclick="openEditTaskModal('${task.text}')" class="ml-4 bg-blue-500 text-white px-2 py-1 rounded">Edit</button>
         <button onclick="deleteTask('${task.text}')" class="ml-4 bg-red-500 text-white px-2 py-1 rounded">Delete</button>
     `;
     list.appendChild(li);
@@ -87,12 +102,71 @@ function toggleTaskCompletion(event, taskText) {
         }
         return task;
     });
+    saveTasks(); // Save tasks after updating
     updateTasks();
 }
 
 function deleteTask(taskText) {
     tasks = tasks.filter(task => task.text !== taskText);
+    saveTasks(); // Save tasks after deletion
     updateTasks();
+}
+
+function openEditTaskModal(taskText) {
+    const task = tasks.find(t => t.text === taskText);
+    if (task) {
+        document.getElementById('taskInput').value = task.text;
+        taskType.value = task.type;
+        if (task.type === 'weekly') {
+            dayInputContainer.classList.remove('hidden');
+            document.getElementById('dayInput').value = task.day;
+        } else {
+            dayInputContainer.classList.add('hidden');
+        }
+        modal.classList.remove('hidden');
+        modal.classList.add('modal-active');
+
+        // Update the form submission to edit task
+        taskForm.onsubmit = (event) => {
+            event.preventDefault();
+            editTask(taskText);
+        };
+    }
+}
+
+function editTask(oldTaskText) {
+    const taskName = document.getElementById('taskInput').value.trim();
+    const taskTypeValue = taskType.value;
+    const dayValue = document.getElementById('dayInput').value;
+    const dayNumber = parseInt(dayValue, 10);
+
+    // Basic validation
+    if (!taskName) {
+        alert("Task name cannot be empty");
+        return;
+    }
+
+    // Update task
+    tasks = tasks.map(task => {
+        if (task.text === oldTaskText) {
+            if (taskTypeValue === 'daily') {
+                return { text: taskName, type: 'daily', completed: task.completed };
+            } else if (taskTypeValue === 'weekly') {
+                if (!dayValue || isNaN(dayNumber) || dayNumber < 1 || dayNumber > 7) {
+                    alert("Please select a valid day for the weekly task.");
+                    return task; // Return original task if validation fails
+                }
+                return { text: taskName, type: 'weekly', day: dayNumber, completed: task.completed };
+            }
+        }
+        return task; // Return unchanged task
+    });
+
+    saveTasks(); // Save tasks after editing
+    updateTasks();
+    modal.classList.add('hidden');
+    modal.classList.remove('modal-active');
+    taskForm.reset();
 }
 
 function updateProgressBar(total, completed, fillElement, textElement) {
@@ -104,6 +178,14 @@ function updateProgressBar(total, completed, fillElement, textElement) {
 openModalButton.addEventListener('click', () => {
     modal.classList.remove('hidden');
     modal.classList.add('modal-active');
+
+    // Reset form for new task
+    taskForm.reset();
+    dayInputContainer.classList.add('hidden');
+    taskForm.onsubmit = (event) => {
+        event.preventDefault();
+        addNewTask();
+    };
 });
 
 window.addEventListener('click', (e) => {
@@ -122,9 +204,7 @@ taskType.addEventListener('change', () => {
     }
 });
 
-taskForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-
+function addNewTask() {
     const taskName = document.getElementById('taskInput').value.trim();
     const taskTypeValue = taskType.value;
     const dayValue = document.getElementById('dayInput').value;
@@ -146,11 +226,12 @@ taskForm.addEventListener('submit', (event) => {
         tasks.push({ text: taskName, type: 'weekly', day: dayNumber, completed: false });
     }
 
+    saveTasks(); // Save tasks after adding
     updateTasks();
     modal.classList.add('hidden');
     modal.classList.remove('modal-active');
     taskForm.reset();
-});
+}
 
 daySelector.addEventListener('change', (e) => {
     simulatedDay = parseInt(e.target.value, 10);
@@ -158,5 +239,8 @@ daySelector.addEventListener('change', (e) => {
     updateTasks();
 });
 
-displayCurrentDateInfo();
-updateTasks();
+// Load tasks when the page loads
+window.onload = () => {
+    loadTasks();
+    displayCurrentDateInfo();
+};
