@@ -35,12 +35,13 @@
         <!-- Navigation Buttons -->
         <div class="grid grid-cols-2 gap-12 w-full max-w-md">
             <!-- Pomodoro Page Button -->
-            <a href="pomodoro.html" class="bg-purple-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-purple-500 transition duration-300 shadow-lg">
+            <a href="{% url 'pomodoro' %}" class="bg-purple-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-purple-500 transition duration-300 shadow-lg">
                 Pomodoro Timer
             </a>
+            
 
             <!-- To-Do List Page Button -->
-            <a href="todo.html" class="bg-green-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-green-500 transition duration-300 shadow-lg">
+            <a  href="{% url 'tasks' %}" class="bg-green-400 text-white font-semibold py-4 px-6 rounded-lg hover:bg-green-500 transition duration-300 shadow-lg">
                 Task Manager
             </a>
         </div>

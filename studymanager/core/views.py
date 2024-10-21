@@ -4,11 +4,12 @@ from django.shortcuts import render
 
 # Home page view
 def home(request):
+
     return render(request, 'home.html')
 
 # Login page view
 def login_page(request):
-    return render(request, 'login.html')
+    return render(request, 'login.html' )
 
 # Pomodoro page view
 def pomodoro_page(request):
@@ -16,4 +17,4 @@ def pomodoro_page(request):
 
 # Task Manager page view
 def task_manager_page(request):
-    return render(request, 'tasks.html')
+    return render(request, 'task.html')
